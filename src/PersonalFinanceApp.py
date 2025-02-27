@@ -507,39 +507,36 @@ def register():
         messagebox.showerror("Error", "Username already exists.")
 
 
-def main():
-    # Initialize database and GUI
-    initialize_db()
+# Initialize database and GUI
+initialize_db()
 
-    root = tk.Tk()
-    root.title("Personal Finance Manager")
-    root.geometry("1000x600")
+root = tk.Tk()
+root.title("Personal Finance Manager")
+root.geometry("1000x600")
 
-    # Set custom style for notebooks
-    style = ttk.Style()
-    style.configure("CustomNotebook.TNotebook.Tab",
-                    font=("Arial", 12), padding=[10, 5])
-    style.configure("Custom.Treeview", font=("Arial", 12))
-    style.configure("Custom.Treeview.Heading", font=("Arial", 12, "bold"))
-    custom_font = ("Arial", 12)
+# Set custom style for notebooks
+style = ttk.Style()
+style.configure("CustomNotebook.TNotebook.Tab",
+                font=("Arial", 12), padding=[10, 5])
+style.configure("Custom.Treeview", font=("Arial", 12))
+style.configure("Custom.Treeview.Heading", font=("Arial", 12, "bold"))
+custom_font = ("Arial", 12)
 
-    username_var = tk.StringVar()
-    password_var = tk.StringVar()
-    total_balance_var = tk.StringVar(value="Total Balance: $0.00")
-    income_amount_var = tk.StringVar()
-    income_description_var = tk.StringVar()
-    income_categories = {"Pay": tk.BooleanVar(), "Other": tk.BooleanVar(
-    ), "Bonus": tk.BooleanVar(), "Investment": tk.BooleanVar()}
-    expense_amount_var = tk.StringVar()
-    expense_description_var = tk.StringVar()
-    expense_categories = {"Bills": tk.BooleanVar(), "Subscriptions": tk.BooleanVar(
-    ), "Groceries": tk.BooleanVar(), "Entertainment": tk.BooleanVar(), "Travel": tk.BooleanVar()}
+username_var = tk.StringVar()
+password_var = tk.StringVar()
+total_balance_var = tk.StringVar(value="Total Balance: $0.00")
+income_amount_var = tk.StringVar()
+income_description_var = tk.StringVar()
+income_categories = {"Pay": tk.BooleanVar(), "Other": tk.BooleanVar(
+), "Bonus": tk.BooleanVar(), "Investment": tk.BooleanVar()}
+expense_amount_var = tk.StringVar()
+expense_description_var = tk.StringVar()
+expense_categories = {"Bills": tk.BooleanVar(), "Subscriptions": tk.BooleanVar(
+), "Groceries": tk.BooleanVar(), "Entertainment": tk.BooleanVar(), "Travel": tk.BooleanVar()}
 
-    logged_in_user_id = None
-
-    show_login_screen()
-    root.mainloop()
+logged_in_user_id = None
 
 
 if __name__ == "__main__":
-    main()
+    show_login_screen()
+    root.mainloop()
