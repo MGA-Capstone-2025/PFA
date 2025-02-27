@@ -23,6 +23,7 @@ import matplotlib.patches
 # Database setup
 DB_NAME = "finance_manager.db"
 
+
 def initialize_db():
     """Initialize the SQLite database and create required tables."""
     with sqlite3.connect(DB_NAME) as conn:
@@ -50,33 +51,43 @@ def initialize_db():
     conn.close()
 
 # Hash a password
+
+
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 # Add a new user to the database
+
+
 def create_user(username, password):
     try:
         hashed_password = hash_password(password)
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+            cursor.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             conn.commit()
         return True
     except sqlite3.IntegrityError:
         return False
 
 # Verify user credentials
+
+
 def verify_user(username, password):
     hashed_password = hash_password(password)
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users WHERE username = ? AND password = ?", (username, hashed_password))
+        cursor.execute(
+            "SELECT id FROM users WHERE username = ? AND password = ?", (username, hashed_password))
         result = cursor.fetchone()
         if result:
             return result[0]  # Return user ID
     return None
 
 # Add a transaction to the database
+
+
 def add_transaction(user_id, amount, description, category):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
@@ -87,6 +98,8 @@ def add_transaction(user_id, amount, description, category):
         conn.commit()
 
 # Load transactions for a user
+
+
 def load_transactions(user_id):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
@@ -97,6 +110,8 @@ def load_transactions(user_id):
         return cursor.fetchall()
 
 # Load category breakdown
+
+
 def load_category_breakdown(user_id):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
@@ -107,6 +122,8 @@ def load_category_breakdown(user_id):
         return cursor.fetchall()
 
 # Calculate total balance for a user
+
+
 def calculate_total_balance(user_id):
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
@@ -115,6 +132,7 @@ def calculate_total_balance(user_id):
         """, (user_id,))
         result = cursor.fetchone()
         return result[0] if result[0] else 0
+
 
 def delete_transaction():
     """
@@ -128,7 +146,8 @@ def delete_transaction():
     # Retrieve transaction details from the selected row
     values = statement_tree.item(selected_item, "values")
     if not values:
-        messagebox.showerror("Error", "Unable to retrieve transaction details.")
+        messagebox.showerror(
+            "Error", "Unable to retrieve transaction details.")
         return
 
     # Extract details
@@ -151,6 +170,8 @@ def delete_transaction():
     messagebox.showinfo("Success", "Transaction deleted successfully.")
 
 # Logout function
+
+
 def logout():
     global logged_in_user_id
     logged_in_user_id = None
@@ -159,12 +180,15 @@ def logout():
     show_login_screen()
 
 # Main screen
+
+
 def show_main_screen():
     for widget in root.winfo_children():
         widget.destroy()
 
     # Add a logout button
-    logout_button = tk.Button(root, text="Logout", command=logout, bg="darkred", fg="white", font=("Arial", 14), padx=10, pady=5)
+    logout_button = tk.Button(root, text="Logout", command=logout,
+                              bg="darkred", fg="white", font=("Arial", 14), padx=10, pady=5)
     logout_button.pack(anchor="ne", padx=10, pady=10)
 
     notebook = ttk.Notebook(root, style="CustomNotebook.TNotebook")
@@ -173,33 +197,46 @@ def show_main_screen():
     # Income Tab
     income_tab = ttk.Frame(notebook)
     notebook.add(income_tab, text="Income")
-    tk.Label(income_tab, text="Income Amount:", font=custom_font).pack(anchor="w")
-    tk.Entry(income_tab, textvariable=income_amount_var, width=20, font=custom_font).pack(anchor="w")
-    tk.Label(income_tab, text="Description:", font=custom_font).pack(anchor="w")
-    tk.Entry(income_tab, textvariable=income_description_var, width=40, font=custom_font).pack(anchor="w")
+    tk.Label(income_tab, text="Income Amount:",
+             font=custom_font).pack(anchor="w")
+    tk.Entry(income_tab, textvariable=income_amount_var,
+             width=20, font=custom_font).pack(anchor="w")
+    tk.Label(income_tab, text="Description:",
+             font=custom_font).pack(anchor="w")
+    tk.Entry(income_tab, textvariable=income_description_var,
+             width=40, font=custom_font).pack(anchor="w")
     tk.Label(income_tab, text="Category:", font=custom_font).pack(anchor="w")
     for cat, var in income_categories.items():
-        tk.Checkbutton(income_tab, text=cat, variable=var, font=custom_font).pack(anchor="w")
-    tk.Button(income_tab, text="Add Income", command=add_income, bg="green", fg="white", font=custom_font, padx=5, pady=5).pack(pady=10)
+        tk.Checkbutton(income_tab, text=cat, variable=var,
+                       font=custom_font).pack(anchor="w")
+    tk.Button(income_tab, text="Add Income", command=add_income, bg="green",
+              fg="white", font=custom_font, padx=5, pady=5).pack(pady=10)
 
     # Expense Tab
     expense_tab = ttk.Frame(notebook)
     notebook.add(expense_tab, text="Expenses")
     tk.Label(expense_tab, text="Amount:", font=custom_font).pack(anchor="w")
-    tk.Entry(expense_tab, textvariable=expense_amount_var, width=20, font=custom_font).pack(anchor="w")
-    tk.Label(expense_tab, text="Description:", font=custom_font).pack(anchor="w")
-    tk.Entry(expense_tab, textvariable=expense_description_var, width=40, font=custom_font).pack(anchor="w")
+    tk.Entry(expense_tab, textvariable=expense_amount_var,
+             width=20, font=custom_font).pack(anchor="w")
+    tk.Label(expense_tab, text="Description:",
+             font=custom_font).pack(anchor="w")
+    tk.Entry(expense_tab, textvariable=expense_description_var,
+             width=40, font=custom_font).pack(anchor="w")
     tk.Label(expense_tab, text="Category:", font=custom_font).pack(anchor="w")
     for cat, var in expense_categories.items():
-        tk.Checkbutton(expense_tab, text=cat, variable=var, font=custom_font).pack(anchor="w")
-    tk.Button(expense_tab, text="Add Expense", command=add_expense, bg="darkred", fg="white", font=custom_font, padx=5, pady=5).pack(pady=10)
+        tk.Checkbutton(expense_tab, text=cat, variable=var,
+                       font=custom_font).pack(anchor="w")
+    tk.Button(expense_tab, text="Add Expense", command=add_expense,
+              bg="darkred", fg="white", font=custom_font, padx=5, pady=5).pack(pady=10)
 
     # Statement Tab
     statement_tab = ttk.Frame(notebook)
     notebook.add(statement_tab, text="Statement")
-    tk.Label(statement_tab, textvariable=total_balance_var, font=("Arial", 14)).pack(pady=10)
+    tk.Label(statement_tab, textvariable=total_balance_var,
+             font=("Arial", 14)).pack(pady=10)
     global statement_tree
-    statement_tree = ttk.Treeview(statement_tab, columns=("Amount", "Description", "Category", "Date"), show="headings", style="Custom.Treeview")
+    statement_tree = ttk.Treeview(statement_tab, columns=(
+        "Amount", "Description", "Category", "Date"), show="headings", style="Custom.Treeview")
     statement_tree.heading("Amount", text="Amount")
     statement_tree.heading("Description", text="Description")
     statement_tree.heading("Category", text="Category")
@@ -211,7 +248,8 @@ def show_main_screen():
     statement_tree.pack(pady=10, fill="both", expand=True)
 
     # Add Delete Button
-    delete_button = tk.Button(statement_tab, text="Delete Selected", command=delete_transaction, bg="darkred", fg="white", font=custom_font, padx=5, pady=5)
+    delete_button = tk.Button(statement_tab, text="Delete Selected", command=delete_transaction,
+                              bg="darkred", fg="white", font=custom_font, padx=5, pady=5)
     delete_button.pack(pady=10)
 
     update_statement()
@@ -228,6 +266,7 @@ def show_main_screen():
 
     notebook.bind("<<NotebookTabChanged>>", on_tab_changed)
 
+
 def update_statement():
     """
     Updates the statement tree view with transactions.
@@ -242,9 +281,11 @@ def update_statement():
     for amount, description, category, date in transactions:
         formatted_amount = f"+${amount:,.2f}" if amount > 0 else f"-${abs(amount):,.2f}"
         color = "green" if amount > 0 else "red"
-        statement_tree.insert("", "end", values=(formatted_amount, description, category, date), tags=(color,))
+        statement_tree.insert("", "end", values=(
+            formatted_amount, description, category, date), tags=(color,))
     statement_tree.tag_configure("green", foreground="green")
     statement_tree.tag_configure("red", foreground="red")
+
 
 def generate_pie_chart(parent):
     for widget in parent.winfo_children():
@@ -259,7 +300,8 @@ def generate_pie_chart(parent):
 
     # Check if there's data to display
     if not income_categories and not expense_categories:
-        tk.Label(parent, text="No data available for chart.", font=("Arial", 12), fg="darkred").pack()
+        tk.Label(parent, text="No data available for chart.",
+                 font=("Arial", 12), fg="darkred").pack()
         return
 
     fig = Figure(figsize=(10, 5), dpi=100)
@@ -268,7 +310,8 @@ def generate_pie_chart(parent):
 
     def on_click(event, labels, ax, chart_type):
         # Determine which pie slice was clicked
-        wedges = [w for w in ax.patches if isinstance(w, matplotlib.patches.Wedge)]
+        wedges = [w for w in ax.patches if isinstance(
+            w, matplotlib.patches.Wedge)]
         for wedge, label in zip(wedges, labels):
             if wedge.contains_point((event.x, event.y)):
                 show_details_popup(label, chart_type)
@@ -276,7 +319,8 @@ def generate_pie_chart(parent):
 
     # Income Pie Chart
     if income_categories:
-        wedges1, texts1, autotexts1 = ax1.pie(income_amounts, labels=income_categories, autopct="%1.1f%%", startangle=140)
+        wedges1, texts1, autotexts1 = ax1.pie(
+            income_amounts, labels=income_categories, autopct="%1.1f%%", startangle=140)
         ax1.set_title("Income Breakdown")
 
         def income_click(event):
@@ -284,11 +328,13 @@ def generate_pie_chart(parent):
 
         fig.canvas.mpl_connect("button_press_event", income_click)
     else:
-        ax1.text(0.5, 0.5, "No Income Data", ha="center", va="center", fontsize=12, color="gray")
+        ax1.text(0.5, 0.5, "No Income Data", ha="center",
+                 va="center", fontsize=12, color="gray")
 
     # Expense Pie Chart
     if expense_categories:
-        wedges2, texts2, autotexts2 = ax2.pie(expense_amounts, labels=expense_categories, autopct="%1.1f%%", startangle=140)
+        wedges2, texts2, autotexts2 = ax2.pie(
+            expense_amounts, labels=expense_categories, autopct="%1.1f%%", startangle=140)
         ax2.set_title("Expense Breakdown")
 
         def expense_click(event):
@@ -296,12 +342,14 @@ def generate_pie_chart(parent):
 
         fig.canvas.mpl_connect("button_press_event", expense_click)
     else:
-        ax2.text(0.5, 0.5, "No Expense Data", ha="center", va="center", fontsize=12, color="gray")
+        ax2.text(0.5, 0.5, "No Expense Data", ha="center",
+                 va="center", fontsize=12, color="gray")
 
     # Render the figure in the Tkinter application
     canvas = FigureCanvasTkAgg(fig, master=parent)
     canvas.draw()
     canvas.get_tk_widget().pack()
+
 
 def show_details_popup(category, chart_type):
     """
@@ -316,10 +364,14 @@ def show_details_popup(category, chart_type):
     frame.pack(fill="both", expand=True, padx=10, pady=10)
 
     # Treeview widget
-    tree = ttk.Treeview(frame, columns=("Amount", "Description", "Date"), show="headings", style="Custom.Treeview")
-    tree.heading("Amount", text="Amount", command=lambda: sort_tree(tree, "Amount", False))
-    tree.heading("Description", text="Description", command=lambda: sort_tree(tree, "Description", False))
-    tree.heading("Date", text="Date", command=lambda: sort_tree(tree, "Date", False))
+    tree = ttk.Treeview(frame, columns=(
+        "Amount", "Description", "Date"), show="headings", style="Custom.Treeview")
+    tree.heading("Amount", text="Amount",
+                 command=lambda: sort_tree(tree, "Amount", False))
+    tree.heading("Description", text="Description",
+                 command=lambda: sort_tree(tree, "Description", False))
+    tree.heading("Date", text="Date",
+                 command=lambda: sort_tree(tree, "Date", False))
     tree.column("Amount", anchor="center", width=100)
     tree.column("Description", anchor="w", width=250)
     tree.column("Date", anchor="center", width=150)
@@ -345,18 +397,22 @@ def show_details_popup(category, chart_type):
         tree.insert("", "end", values=(formatted_amount, description, date))
 
     # Close button
-    close_button = tk.Button(popup, text="Close", command=popup.destroy, bg="darkred", fg="white", font=custom_font)
+    close_button = tk.Button(popup, text="Close", command=popup.destroy,
+                             bg="darkred", fg="white", font=custom_font)
     close_button.pack(pady=10)
+
 
 def sort_tree(tree, column, reverse):
     """
     Sort the treeview by the specified column.
     """
-    data = [(tree.set(child, column), child) for child in tree.get_children("")]
+    data = [(tree.set(child, column), child)
+            for child in tree.get_children("")]
 
     # Sort data based on the column type (numbers vs text)
     if column == "Amount":
-        data.sort(key=lambda t: float(t[0].replace("$", "").replace(",", "").replace("+", "").replace("-", "")), reverse=reverse)
+        data.sort(key=lambda t: float(t[0].replace("$", "").replace(
+            ",", "").replace("+", "").replace("-", "")), reverse=reverse)
     else:
         data.sort(key=lambda t: t[0], reverse=reverse)
 
@@ -367,11 +423,13 @@ def sort_tree(tree, column, reverse):
     # Reverse the sort order for the next click
     tree.heading(column, command=lambda: sort_tree(tree, column, not reverse))
 
+
 def add_income():
     try:
         amount = float(income_amount_var.get())
         description = income_description_var.get()
-        category = ", ".join([cat for cat, var in income_categories.items() if var.get()])
+        category = ", ".join(
+            [cat for cat, var in income_categories.items() if var.get()])
         if amount > 0 and description and category:
             add_transaction(logged_in_user_id, amount, description, category)
             update_statement()
@@ -384,11 +442,13 @@ def add_income():
     except ValueError:
         messagebox.showerror("Error", "Invalid amount.")
 
+
 def add_expense():
     try:
         amount = float(expense_amount_var.get())
         description = expense_description_var.get()
-        category = ", ".join([cat for cat, var in expense_categories.items() if var.get()])
+        category = ", ".join(
+            [cat for cat, var in expense_categories.items() if var.get()])
         if amount > 0 and description and category:
             add_transaction(logged_in_user_id, -amount, description, category)
             update_statement()
@@ -401,6 +461,7 @@ def add_expense():
     except ValueError:
         messagebox.showerror("Error", "Invalid amount.")
 
+
 def show_login_screen():
     for widget in root.winfo_children():
         widget.destroy()
@@ -408,15 +469,21 @@ def show_login_screen():
     frame = tk.Frame(root, pady=20)
     frame.pack(expand=True)
 
-    tk.Label(frame, text="Welcome to Personal Finance Manager", font=("Arial", 18, "bold")).pack(pady=10)
+    tk.Label(frame, text="Welcome to Personal Finance Manager",
+             font=("Arial", 18, "bold")).pack(pady=10)
     tk.Label(frame, text="Username:", font=custom_font).pack(pady=5)
-    tk.Entry(frame, textvariable=username_var, width=30, font=custom_font).pack()
+    tk.Entry(frame, textvariable=username_var,
+             width=30, font=custom_font).pack()
 
     tk.Label(frame, text="Password:", font=custom_font).pack(pady=5)
-    tk.Entry(frame, textvariable=password_var, show="*", width=30, font=custom_font).pack()
+    tk.Entry(frame, textvariable=password_var, show="*",
+             width=30, font=custom_font).pack()
 
-    tk.Button(frame, text="Login", command=login, font=custom_font, bg="blue", fg="white", width=15).pack(pady=10)
-    tk.Button(frame, text="Register", command=register, font=custom_font, bg="green", fg="white", width=15).pack()
+    tk.Button(frame, text="Login", command=login, font=custom_font,
+              bg="blue", fg="white", width=15).pack(pady=10)
+    tk.Button(frame, text="Register", command=register,
+              font=custom_font, bg="green", fg="white", width=15).pack()
+
 
 def login():
     global logged_in_user_id
@@ -429,6 +496,7 @@ def login():
     else:
         messagebox.showerror("Error", "Invalid username or password.")
 
+
 def register():
     username = username_var.get()
     password = password_var.get()
@@ -438,31 +506,40 @@ def register():
     else:
         messagebox.showerror("Error", "Username already exists.")
 
-# Initialize database and GUI
-initialize_db()
 
-root = tk.Tk()
-root.title("Personal Finance Manager")
-root.geometry("1000x600")
+def main():
+    # Initialize database and GUI
+    initialize_db()
 
-# Set custom style for notebooks
-style = ttk.Style()
-style.configure("CustomNotebook.TNotebook.Tab", font=("Arial", 12), padding=[10, 5])
-style.configure("Custom.Treeview", font=("Arial", 12))
-style.configure("Custom.Treeview.Heading", font=("Arial", 12, "bold"))
-custom_font = ("Arial", 12)
+    root = tk.Tk()
+    root.title("Personal Finance Manager")
+    root.geometry("1000x600")
 
-username_var = tk.StringVar()
-password_var = tk.StringVar()
-total_balance_var = tk.StringVar(value="Total Balance: $0.00")
-income_amount_var = tk.StringVar()
-income_description_var = tk.StringVar()
-income_categories = {"Pay": tk.BooleanVar(), "Other": tk.BooleanVar(), "Bonus": tk.BooleanVar(), "Investment": tk.BooleanVar()}
-expense_amount_var = tk.StringVar()
-expense_description_var = tk.StringVar()
-expense_categories = {"Bills": tk.BooleanVar(), "Subscriptions": tk.BooleanVar(), "Groceries": tk.BooleanVar(), "Entertainment": tk.BooleanVar(), "Travel": tk.BooleanVar()}
+    # Set custom style for notebooks
+    style = ttk.Style()
+    style.configure("CustomNotebook.TNotebook.Tab",
+                    font=("Arial", 12), padding=[10, 5])
+    style.configure("Custom.Treeview", font=("Arial", 12))
+    style.configure("Custom.Treeview.Heading", font=("Arial", 12, "bold"))
+    custom_font = ("Arial", 12)
 
-logged_in_user_id = None
+    username_var = tk.StringVar()
+    password_var = tk.StringVar()
+    total_balance_var = tk.StringVar(value="Total Balance: $0.00")
+    income_amount_var = tk.StringVar()
+    income_description_var = tk.StringVar()
+    income_categories = {"Pay": tk.BooleanVar(), "Other": tk.BooleanVar(
+    ), "Bonus": tk.BooleanVar(), "Investment": tk.BooleanVar()}
+    expense_amount_var = tk.StringVar()
+    expense_description_var = tk.StringVar()
+    expense_categories = {"Bills": tk.BooleanVar(), "Subscriptions": tk.BooleanVar(
+    ), "Groceries": tk.BooleanVar(), "Entertainment": tk.BooleanVar(), "Travel": tk.BooleanVar()}
 
-show_login_screen()
-root.mainloop()
+    logged_in_user_id = None
+
+    show_login_screen()
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()

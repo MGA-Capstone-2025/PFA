@@ -1,4 +1,14 @@
+# database files
 *.db
+
+# virtual environments
 .venv/
 venv/
 .conda/
+
+# python/pytest caches
+__pycache__/
+.pytest_cache/
+
+# vscode workspace files
+.vscode/
